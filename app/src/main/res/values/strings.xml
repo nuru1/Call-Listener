@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Call Listener</string>
+    <string name="permission_check">App doesn\'t work properly until the permissions are enabled</string>
+</resources>
