@@ -3,6 +3,7 @@ package noor.callListener;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -13,6 +14,8 @@ import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 /**
  * Created by asif on 25-Feb-18.
@@ -37,7 +40,7 @@ public class PhoneStateReceiver extends BroadcastReceiver {
             String incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
 
             if(state.equals(TelephonyManager.EXTRA_STATE_RINGING)){
-                //Toast.makeText(context,"Incoming Call",Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context,"Incoming Call",Toast.LENGTH_SHORT).show();
                 //Toast.makeText(context,"Ringing State Number is -"+incomingNumber,Toast.LENGTH_SHORT).show();
                 Log.e("Incomming","Ringing State Number is "+incomingNumber);
                 if(check(incomingNumber)){
@@ -59,11 +62,12 @@ public class PhoneStateReceiver extends BroadcastReceiver {
         //Toast.makeText(context,"in check- -",Toast.LENGTH_SHORT).show();
         db = new DatabaseHelper(context);
 
-        numbers = db.GetNumbers();
-        for (int i=0;i<numbers.length;i++){
-            //Toast.makeText(context,"NUMBER FROM DB  "+numbers[i]+"  --" + incommingNumber,Toast.LENGTH_SHORT).show();
-            Log.e("Number checking","NUMBER FROM DB  "+numbers[i]+"  --" + incommingNumber);
-            if(PhoneNumberUtils.compare(numbers[i],incommingNumber)) {
+        ArrayList<String> numbers = db.GetPhnNumbers();
+
+        for (int i=0;i<numbers.size();i++){
+            //Toast.makeText(context,"NUMBER FROM DB  "+numbers.get(i)+"  --" + incommingNumber,Toast.LENGTH_SHORT).show();
+            //Log.e("Number checking","NUMBER FROM DB  "+numbers.get(i)+"  --" + incommingNumber);
+            if(PhoneNumberUtils.compare(numbers.get(i),incommingNumber)) {
                 //Toast.makeText(context,"number Matched!!",Toast.LENGTH_SHORT).show();
                 Log.e("Number checking","number Matched!!");
                 return true;

@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.ArrayList;
+
 /**
  * Created by asif on 25-Feb-18.
  */
@@ -33,7 +35,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_TABLE_NUMBERS = "CREATE TABLE "
             + TABLE_NUMBERS + "("
-            + KEY_ID + " INTEGER PRIMARY KEY,"
+            + KEY_ID + " INTEGER PRIMARY KEY autoincrement,"
             + KEY_NUMBER + " TEXT,"
             + KEY_NAME + " TEXT" + ")";
 
@@ -62,18 +64,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_NUMBERS);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATIONS);
+        onCreate(sqLiteDatabase);
     }
 
     public long InsertNumber(Numbers numbers) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(KEY_ID, numbers.getId());
         values.put(KEY_NUMBER, numbers.getNumber());
         values.put(KEY_NAME,numbers.getName());
 
         long id = db.insert(TABLE_NUMBERS, null, values);
-        Log.e("DbHelper","inserted "+numbers.getNumber() );
+        Log.e("DbHelper","inserted "+numbers.getNumber()+" "+numbers.getId() );
         db.close();
         return id;
     }
@@ -92,23 +94,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return id;
     }
 
-    public String[] GetNumbers() {
-        String[] numbers = new String[3];
-
+    public ArrayList<String> GetPhnNumbers() {
         String selectQuery = "SELECT  number FROM " + TABLE_NUMBERS;
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(selectQuery, null);
-
-        int i = 0;
-        if (c.moveToFirst()) {
-            do {
-                numbers[i++] = c.getString((c.getColumnIndex(KEY_NUMBER)));
-                //Log.e("SQLite GetNumbers",i+" "+c.getColumnIndex(KEY_NUMBER));
-            } while (c.moveToNext());
+        ArrayList<String> numbers = new ArrayList<>();
+        while (c.moveToNext()){
+            numbers.add(c.getString(0));
         }
         db.close();
         return numbers;
+    }
+
+    public Cursor GetNumbers() {
+
+        String selectQuery = "SELECT * FROM " + TABLE_NUMBERS;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+        return c;
     }
 
     public String[] GetNames() {
@@ -206,6 +211,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }else {
             return false;
         }
+    }
+
+    public boolean DeleteNumber(String id){
+        SQLiteDatabase db = this.getReadableDatabase();
+        int res = db.delete(TABLE_NUMBERS, "id = ?",new String[] {id});
+        if (res==-1)
+            return false;
+        else
+            return true;
     }
 
 }

@@ -13,6 +13,11 @@ public class Numbers {
     public Numbers() {
     }
 
+    public Numbers( String number, String name) {
+        this.number = number;
+        this.name = name;
+    }
+
     public Numbers(int id, String number, String name) {
         this.id = id;
         this.number = number;
@@ -27,19 +32,19 @@ public class Numbers {
         return name;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getNumber() {
         return number;
     }
 
     public void setNumber(String number) {
         this.number = number;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
